@@ -51,7 +51,8 @@ const useTracker = ({ api = 'all'}) => {
             return;
         }
 
-        const { data } = response;
+        // const { data } = response;
+        const data = response.data
 
         updateTracker((prev) => {
             return {

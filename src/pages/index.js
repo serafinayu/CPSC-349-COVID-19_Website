@@ -13,6 +13,8 @@ import Map from "components/Map";
 import axios from 'axios';
 import {useTracker} from "hooks";
 
+import {useTracker} from "hooks"
+
 const LOCATION = { lat: 0, lng: 0 };   // middle of the world
   // { lat: 38.9072, lng: -77.0369 };  // in Los Angeles
 
@@ -70,8 +72,13 @@ const MapEffect = ({ markerRef }) => {
   console.log('in MapEffect...');
   const map = useMap();
 
+  const { data: countries = [] } = useTracker({
+    api: 'countries'
+  })
   useEffect(() => {
     if (!markerRef.current || !map) return;
+
+    console.log('countries', countries);
 
     (async function run() {
       console.log('about to call axios to get the data...');
@@ -95,19 +102,23 @@ const MapEffect = ({ markerRef }) => {
         //   'Disease.sh': 'disease.sh'
         // }
       };
+
+      const hasCountries = Array.isArray(countries) && countries.length > 0;
+      if (!hasCountries) { console.log('No countries, sorry!'); return }
+      // let response; 
       
-      let response; 
-      
-      try { response = await axios.request(options); 
-      } catch (error) { 
-        console.error(error);  
-        return; 
-      }
-      console.log(response.data);
+     
+      // try { response = await axios.request(options); 
+      // } catch (error) { 
+      //   console.error(error);  
+      //   return; 
+      // }
+      // console.log(response.data);
       // const rdr = response.data.response;    // for rapidapi
       // const data = rdr;
+      
 
-      const data = response.data;     // for disease.sh
+      // const data = response.data;     // for disease.sh
       const hasData = Array.isArray(data) && data.length > 0;
       if (!Array.isArray(data)) { console.log('not an array!'); return; }
       if (data.length === 0) { console.log('data length is === 0'); }
@@ -116,7 +127,8 @@ const MapEffect = ({ markerRef }) => {
 
       const geoJson = {
         type: 'FeatureCollection',
-        features: data.map((country = {}) => {
+          features: countries.map((country = {}) => {
+          // features: data.map((country = {}) => {
           const {countryInfo = {} } = country;
           const { lat, long: lng } = countryInfo;
           return {
@@ -162,6 +174,7 @@ const IndexPage = () => {
   })
 
   const hasCountries = Array.isArray(countries) && countries.length > 0;
+
   console.log('in IndexPage, before useRef');
   const markerRef = useRef();
 
