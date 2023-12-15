@@ -7,8 +7,19 @@ import Layout from "components/Layout";
 import Container from "components/Container";
 
 const SecondPage = () => {
-  const { companyName, companyUrl, authorName, authorUrl, siteDescription } =
-    useSiteMetadata();
+  const { siteDescription } = useSiteMetadata();
+
+  const institutionInfo = {
+    name: "California State University Fullerton (CSUF)",
+    course: "CPSC 349 - Front-end Web Development (Fall 2023, Section 01, 13660)",
+  };
+
+  const devTeam = [
+    "Serafina Yu",
+    "An Dao",
+    "Francisco Ramirez",
+    "Josue Han Yan Tai Liu",
+  ];
 
   return (
     <Layout pageName="about">
@@ -18,16 +29,22 @@ const SecondPage = () => {
       <Container type="content">
         <h1>About</h1>
 
-        <h2>{companyName}</h2>
-        <p>{siteDescription}</p>
+        <h2>Institution Info</h2>
         <p>
-          <a href={companyUrl}>View on Github</a>
+          Name: {institutionInfo.name}
+          <br />
+          Course: {institutionInfo.course}
         </p>
 
-        <h2>Created By</h2>
-        <p>
-          <a href={authorUrl}>{authorName}</a>
-        </p>
+        <h2>Dev Team</h2>
+        <ul>
+          {devTeam.map((teamMember, index) => (
+            <li key={index}>{teamMember}</li>
+          ))}
+        </ul>
+
+        <h2>Site Description</h2>
+        <p>{siteDescription}</p>
       </Container>
     </Layout>
   );
