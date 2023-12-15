@@ -20,10 +20,7 @@ const Header = () => {
             <Link to="/about/">About</Link>
           </li>
           <li>
-            <a href={companyUrl}>
-              <span className="visually-hidden">Github</span>
-              <FaGithub />
-            </a>
+           
           </li>
         </ul>
       </Container>
