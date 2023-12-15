@@ -10,6 +10,7 @@ import Layout from "components/Layout";
 import Container from "components/Container";
 import Map from "components/Map";
 
+import {useTracker} from "hooks";
 import axios from 'axios';
 
 const LOCATION = { lat: 0, lng: 0 };   // middle of the world
