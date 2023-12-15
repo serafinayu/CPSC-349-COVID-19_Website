@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import axious from 'axios';
+import axios from 'axios';
 
-const API_HOST = 'https:/disease.sh/v3/covi19';
+const API_HOST = 'https:/disease.sh/v3/covid19';
 
 const ENDPOINTS = [
     {
