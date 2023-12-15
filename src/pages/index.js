@@ -139,14 +139,14 @@ const IndexPage = () => {
 
   return (
     <Layout pageName="home">
-      <Helmet><title>Home Page</title></Helmet>
+      <Helmet><title>COVID-19 Across the Globe</title></Helmet>
       <Map {...mapSettings}>
         <MapEffect markerRef={markerRef} />
         <Marker ref={markerRef} position={CENTER} />
       </Map>
 
       <Container type="content" className="text-center home-start">
-        <h2>Still Getting Started?</h2>
+        <h2>Home Page</h2>
       </Container>
     </Layout>
   );
