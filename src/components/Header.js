@@ -1,16 +1,18 @@
 import React from "react";
 import { Link } from "gatsby";
-import { FaGithub } from "react-icons/fa";
-
 import { useSiteMetadata } from "hooks";
-
 import Container from "components/Container";
 
 const Header = () => {
-  const { companyName, companyUrl } = useSiteMetadata();
+  const { companyName } = useSiteMetadata();
+
+  // Define a custom style for the header container background
+  const headerContainerStyle = {
+    backgroundColor: "#00FFFF", // Cyan color, which complements purple
+  };
 
   return (
-    <header>
+    <header style={headerContainerStyle}>
       <Container type="content">
         <p>
           <Link to="/">{companyName}</Link>
@@ -18,10 +20,7 @@ const Header = () => {
         <ul>
           <li>
             <Link to="/about/">About</Link>
-          </li>
-          <li>
-           
-          </li>
+          </li>          
         </ul>
       </Container>
     </header>
