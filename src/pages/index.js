@@ -10,8 +10,8 @@ import Layout from "components/Layout";
 import Container from "components/Container";
 import Map from "components/Map";
 
-import {useTracker} from "hooks";
 import axios from 'axios';
+import {useTracker} from "hooks";
 
 const LOCATION = { lat: 0, lng: 0 };   // middle of the world
   // { lat: 38.9072, lng: -77.0369 };  // in Los Angeles
@@ -161,7 +161,7 @@ const IndexPage = () => {
     api: 'countries'
   })
 
-  const hasCountries = Array.isArray(countries) && countries.l
+  const hasCountries = Array.isArray(countries) && countries.length > 0;
   console.log('in IndexPage, before useRef');
   const markerRef = useRef();
 
