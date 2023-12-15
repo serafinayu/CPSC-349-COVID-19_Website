@@ -1,11 +1,11 @@
 {
-  "name": "gatsby-starter-leaflet",
-  "title": "Gatsby Starter Leaflet",
-  "description": "A Gatsby starter with Leafet!",
+  "name": "covid-19-data",
+  "title": "COVID-19 Data",
+  "description": "COVID-19 Data at a Glance",
   "version": "0.3.0",
   "author": {
-    "name": "Colby Fayock",
-    "email": "hello@colbyfayock.com",
+    "name": "Byte Me",
+    "email": "byteMe@gmail.com",
     "url": "https://twitter.com/colbyfayock"
   },
   "dependencies": {
