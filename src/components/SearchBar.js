@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import PropTypes from "prop-types"; // Import PropTypes
 
 const SearchBar = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = () => {
     onSearch(searchTerm);
@@ -18,6 +19,11 @@ const SearchBar = ({ onSearch }) => {
       <button onClick={handleSearch}>Search</button>
     </div>
   );
+};
+
+// Define PropTypes for SearchBar
+SearchBar.propTypes = {
+  onSearch: PropTypes.func.isRequired, // Indicates onSearch is a required function
 };
 
 export default SearchBar;
