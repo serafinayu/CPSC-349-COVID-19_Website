@@ -13,7 +13,6 @@ This is a website designed to show covid cases on an interactive map.
 * An Dao
 * Francisco Ramirez
 * Josue Han Yan Tai Liu
-* Matthew Sanchez
 
 ## Notes ##
 
