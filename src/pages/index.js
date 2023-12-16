@@ -73,12 +73,11 @@ function countryPointToLayer(feature = {}, latlng) {
 const searchLocation = async (searchTerm) => {
   try {
     const response = await axios.get(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchTerm)}.json?access_token=YOUR_MAPBOX_ACCESS_TOKEN`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchTerm)}`
     );
-
-    if (response.data && response.data.features && response.data.features.length > 0) {
-      const { center } = response.data.features[0];
-      return { lat: center[1], lon: center[0] };
+    if (response.data.length > 0) {
+      const { lat, lon } = response.data[0];
+      return { lat: parseFloat(lat), lon: parseFloat(lon) };
     }
   } catch (error) {
     console.error('Error fetching coordinates:', error);
@@ -134,13 +133,20 @@ const MapEffect = ({ markerRef, searchTerm }) => {
       if (searchTerm) {
         const coordinates = await searchLocation(searchTerm);
         if (coordinates) {
-          await promiseToFlyTo(map, { zoom: ZOOM, center: [coordinates.lat, coordinates.lon] });
+          await promiseToFlyTo(map, { zoom: ZOOM, center: [coordinates.lat, coordinates.lon] });         
         } else {
           console.log('Location not found.');
         }
       }
     })();
   }, [map, markerRef, countries, searchTerm]); 
+
+  useEffect(() => {
+    if (searchTerm && !map.flyToLocation) {
+      map.flyTo(CENTER, ZOOM);
+    }
+  }, [map, searchTerm]);
+
   return null;
 };
 
