@@ -1,17 +1,16 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Helmet } from "react-helmet";
 import L from "leaflet";
 import { Marker, useMap } from "react-leaflet";
+import axios from 'axios';
 
 import { promiseToFlyTo, getCurrentLocation } from "lib/map";
 
 import Layout from "components/Layout";
 import Container from "components/Container";
 import Map from "components/Map";
-
-import axios from 'axios'
-
+import SearchBar from "components/SearchBar";
 import { useTracker } from "hooks";
 
 const LOCATION = { lat: 0, lng: 0 };   // middle of the world
@@ -71,15 +70,29 @@ function countryPointToLayer(feature = {}, latlng) {
   });
 }
 
-const MapEffect = ({ markerRef }) => {
-  console.log('in MapEffect...');
+const searchLocation = async (searchTerm) => {
+  try {
+    const response = await axios.get(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchTerm)}.json?access_token=YOUR_MAPBOX_ACCESS_TOKEN`
+    );
+
+    if (response.data && response.data.features && response.data.features.length > 0) {
+      const { center } = response.data.features[0];
+      return { lat: center[1], lon: center[0] };
+    }
+  } catch (error) {
+    console.error('Error fetching coordinates:', error);
+  }
+
+  return null;
+};
+
+const MapEffect = ({ markerRef, searchTerm }) => {
   const map = useMap();
   const { data: countries = [] } = useTracker({ api: 'countries' });
 
   useEffect(() => {
     if (!markerRef.current || !map) return;
-
-    console.log('countries', countries);
 
     (async function run() {
       const hasCountries = Array.isArray(countries) && countries.length > 0;
@@ -88,7 +101,6 @@ const MapEffect = ({ markerRef }) => {
         return;
       }
 
-      
       const geoJson = {
         type: 'FeatureCollection',
         features: countries.map((country = {}) => {
@@ -107,8 +119,6 @@ const MapEffect = ({ markerRef }) => {
         })
       };
 
-      console.log('geoJson', geoJson);
-
       const geoJsonLayers = new L.GeoJSON(geoJson, {
         pointToLayer: countryPointToLayer
       });
@@ -119,17 +129,29 @@ const MapEffect = ({ markerRef }) => {
       setTimeout(async () => {
         await promiseToFlyTo(map, { zoom: ZOOM, center: location });
       }, timeToZoom);
+
+      // Fly to the selected country or area based on the searchTerm
+      if (searchTerm) {
+        const coordinates = await searchLocation(searchTerm);
+        if (coordinates) {
+          await promiseToFlyTo(map, { zoom: ZOOM, center: [coordinates.lat, coordinates.lon] });
+        } else {
+          console.log('Location not found.');
+        }
+      }
     })();
-  }, [map, markerRef, countries]); 
+  }, [map, markerRef, countries, searchTerm]); 
   return null;
 };
 
 MapEffect.propTypes = {
   markerRef: PropTypes.object,
+  searchTerm: PropTypes.string, // Pass searchTerm as a prop
 };
 
 const IndexPage = () => {
   const markerRef = useRef();
+  const [searchTerm, setSearchTerm] = useState('');
 
   const mapSettings = {
     center: CENTER,
@@ -137,18 +159,23 @@ const IndexPage = () => {
     zoom: DEFAULT_ZOOM,
   };
 
+  const handleSearch = (term) => {
+    setSearchTerm(term); // Update the search term when searching
+  };
+
   return (
     <Layout pageName="home">
-      <Helmet><title>COVID-19 Across the Globe</title></Helmet>
-      <Map {...mapSettings}>
-        <MapEffect markerRef={markerRef} />
-        <Marker ref={markerRef} position={CENTER} />
-      </Map>
-
-      <Container type="content" className="text-center home-start">
-        <h2>Home Page</h2>
-      </Container>
-    </Layout>
+    <Helmet><title>COVID-19 Across the Globe</title></Helmet>
+    <SearchBar onSearch={handleSearch} /> {/* Render the SearchBar component */}
+    <Map {...mapSettings}>
+      <MapEffect markerRef={markerRef} searchTerm={searchTerm} />
+      <Marker ref={markerRef} position={CENTER} />
+    </Map>
+  
+    <Container type="content" className="text-center home-start">
+      <h2>Home Page</h2>
+    </Container>
+  </Layout>
   );
 };
 
