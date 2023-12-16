@@ -132,7 +132,7 @@ const MapEffect = ({ markerRef, searchTerm }) => {
   }, [map, markerRef, countries]);
 
   useEffect(() => {
-    if (searchTerm && !map.flyToLocation) {
+    if (searchTerm) {
       // Fly to the selected country or area based on the searchTerm
       const search = async () => {
         const coordinates = await searchLocation(searchTerm);
@@ -144,12 +144,19 @@ const MapEffect = ({ markerRef, searchTerm }) => {
         }
       };
       search();
-    } else if (!searchTerm && map.flyToLocation) {
+    } else if (map.flyToLocation) {
       // If the search term is cleared, reset the map to the center
       map.flyTo(CENTER, ZOOM);
       map.flyToLocation = false;
     }
   }, [map, searchTerm]);
+
+  useEffect(() => {
+    // Reset the map flyToLocation flag when the component unmounts
+    return () => {
+      map.flyToLocation = false;
+    };
+  }, []);
 
   return null;
 };
