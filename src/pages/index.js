@@ -128,22 +128,26 @@ const MapEffect = ({ markerRef, searchTerm }) => {
       setTimeout(async () => {
         await promiseToFlyTo(map, { zoom: ZOOM, center: location });
       }, timeToZoom);
-
-      // Fly to the selected country or area based on the searchTerm
-      if (searchTerm) {
-        const coordinates = await searchLocation(searchTerm);
-        if (coordinates) {
-          await promiseToFlyTo(map, { zoom: ZOOM, center: [coordinates.lat, coordinates.lon] });         
-        } else {
-          console.log('Location not found.');
-        }
-      }
     })();
-  }, [map, markerRef, countries, searchTerm]); 
+  }, [map, markerRef, countries]);
 
   useEffect(() => {
     if (searchTerm && !map.flyToLocation) {
+      // Fly to the selected country or area based on the searchTerm
+      const search = async () => {
+        const coordinates = await searchLocation(searchTerm);
+        if (coordinates) {
+          map.flyToLocation = true;
+          await promiseToFlyTo(map, { zoom: ZOOM, center: [coordinates.lat, coordinates.lon] });
+        } else {
+          console.log('Location not found.');
+        }
+      };
+      search();
+    } else if (!searchTerm && map.flyToLocation) {
+      // If the search term is cleared, reset the map to the center
       map.flyTo(CENTER, ZOOM);
+      map.flyToLocation = false;
     }
   }, [map, searchTerm]);
 
