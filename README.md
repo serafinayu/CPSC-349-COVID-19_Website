@@ -16,7 +16,7 @@ This is a website designed to show covid cases on an interactive map.
 
 ## Notes ##
 
-* Website deployed link:
+* Website deployed in Google Firebase: https://covid-interactice-map-website.web.app/
 
 ### Requirements ##
 * [Gatsby CLI](https://www.npmjs.com/package/gatsby-cli)
