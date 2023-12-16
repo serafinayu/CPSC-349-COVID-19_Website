@@ -13,15 +13,15 @@ const ENDPOINTS = [
         id: 'countries',
         path: '/countries'
     }
-]
+];
 
 const defaultState = {
     data: null,
     state: 'ready'
-}
+};
 
-const useTracker = ({ api = 'all'}) => {
-    const [tracker = {}, updateTracker] = useState(defaultState)
+const useTracker = ({ api = 'all', searchTerm = '' }) => {
+    const [tracker = {}, updateTracker] = useState(defaultState);
 
     async function fetchTracker() {
         let route = ENDPOINTS.find(({ id } = {}) => id === api);
@@ -30,48 +30,46 @@ const useTracker = ({ api = 'all'}) => {
             route = ENDPOINTS.find(({ isDefault } = {}) => !!isDefault);
         }
 
-        let response; 
+        let response;
 
         try {
-            updateTracker((prev) => {
-                return {
-                    ...prev,
-                    state: 'loading'
-                }
-            });
-            response = await axios.get(`${API_HOST}${route.path}`);
-        } catch(e) {
-            updateTracker((prev) => {
-                return {
-                    ...prev,
-                    state: 'error',
-                    error: e
-                }
-            });
+            updateTracker((prev) => ({
+                ...prev,
+                state: 'loading'
+            }));
+            if (searchTerm) {
+                // If a searchTerm is provided, search by country or area name
+                response = await axios.get(`${API_HOST}${route.path}/${searchTerm}`);
+            } else {
+                // Otherwise, fetch data from the specified API endpoint
+                response = await axios.get(`${API_HOST}${route.path}`);
+            }
+        } catch (e) {
+            updateTracker((prev) => ({
+                ...prev,
+                state: 'error',
+                error: e
+            }));
             return;
         }
 
-        // const { data } = response;
-        const data = response.data
+        const data = response.data;
 
-        updateTracker((prev) => {
-            return {
-                ...prev,
-                state: 'ready',
-                data
-            }
-        });
+        updateTracker((prev) => ({
+            ...prev,
+            state: 'ready',
+            data
+        }));
     }
 
     useEffect(() => {
-        fetchTracker()
-    }, [api])
+        fetchTracker();
+    }, [api, searchTerm]);
 
     return {
         fetchTracker,
         ...tracker
-    }
-}
-
+    };
+};
 
 export default useTracker;
